@@ -74,8 +74,10 @@ class avrnetio(object):
     #def setSystemTime(self,dt):
     #    self.__sendRequest("time " + time.time()dt.strftime() )
     def getSystemTime(self):
-        pdb.set_trace()
         return self.__sendRequest("time")
+    
+    def getSystemUptime(self):
+        return self.__sendRequest("whm")
     
     
     # generic method to send requests to the NET-IO 230A and checking the response
