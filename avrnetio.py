@@ -37,6 +37,8 @@ from socket import *
 import pdb
 ## for math.ceil()
 #import math
+## for sys.exc_info()
+import sys
 
 import time
 ### for date.today()
@@ -52,6 +54,7 @@ class avrnetio(object):
         self.__secureLogin = secureLogin
         self.__port = 2701
         self.__bufsize = 1024
+        self.__refEP = None
         # create a TCP/IP socket
         self.__s = socket(AF_INET, SOCK_STREAM)
         self.__s.settimeout(6)
@@ -59,15 +62,11 @@ class avrnetio(object):
     def __login(self):
         # connect to the server
         try:
+            self.__s = socket(AF_INET, SOCK_STREAM)
+            self.__s.settimeout(6)
             self.__s.connect((self.__host, self.__port))
-        except error:
-            errno, errstr = sys.exc_info()[:2]
-            if errno == socket.timeout:
-                raise NameError("Timeout while connecting to " + self.__host)
-                #print "There was a timeout"
-            else:
-                raise NameError("No connection to endpoint " + self.__host)
-                #print "There was some other socket error"
+        except error:# some other socket error
+            raise NameError("No connection to endpoint " + self.__host)
             return False
         return True
     
@@ -78,6 +77,28 @@ class avrnetio(object):
     
     def getSystemUptime(self):
         return self.__sendRequest("whm")
+    
+    def __hexStringToInt(self, hexString):
+        return int(hexString, 16)
+    
+    def getADCs(self):
+        data = self.__sendRequest("adc get").strip().split(" ")
+        data = map(self.__hexStringToInt,data)
+        return data
+    
+    # set reference electrical potential
+    def setRefEP(self,referenceEP):
+        self.__refEP = referenceEP
+    
+    def __10bitIntToVolt(self, Integer):
+        return Integer/1024.0*self.__refEP
+    
+    def getADCsAsVolts(self):
+        if self.__refEP == None:
+            raise NameError("Please set reference electrical potential first.")
+        ADCs = self.getADCs()
+        ADCs = map(self.__10bitIntToVolt,ADCs)
+        return ADCs
     
     
     # generic method to send requests to the NET-IO 230A and checking the response
