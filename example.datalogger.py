@@ -36,6 +36,7 @@ import time
 
 host = "192.168.100.3"
 defaultFilename = "./logged_data.txt"
+refVoltage = 2.5
 
 def main():
     
@@ -52,31 +53,44 @@ def main():
     
     if options.filename == None:
         options.filename = defaultFilename
-        print "Logging to " + defaultFilename + "as no filenmame was supplied on the command line."
+        print "Logging to " + defaultFilename + " as no filenmame was supplied on the command line."
     
     print "Writing to file: %s" % options.filename
-    file = open(options.filename, 'w')
-    file.write("Starting new logfile"+"\n")
+    logfile = open(options.filename, 'w')
+    logfile.write("Starting new logfile"+"\n")
     
     try:
+        try:
+            netio = avrnetio.avrnetio(host)
+            netio.setRefEP(refVoltage)
+        except StandardError as e:
+            print("could not connect" + e.value)
+            raise KeyboardInterrupt()
         while 1:
             try:
-                netio = avrnetio.avrnetio(host)
-            except StandardError:
-                print("could not connect")
+                ADCs = netio.getADCs()
+                ADCsInVolts = netio.getADCsAsVolts()
+            except NameError, message:
+                print(message)
                 raise KeyboardInterrupt()
-            ADCs = netio.getADCs()
-            netio = None
+            except StandardError, message:
+                print(message)
+                #print("AVR-NET-IO not available anymore. EXITING.")
+                raise KeyboardInterrupt()
             
             
             for ADC in ADCs :
-                file.write("%s " % (ADC))            
-            file.write("\n")
+                logfile.write("%s " % (ADC))            
+            logfile.write("\n")
+            for ADCInVolts in ADCsInVolts :
+                logfile.write("%.2fV " % (ADCInVolts))            
+            logfile.write("\n")
             time.sleep(1)
     
     except KeyboardInterrupt:
         print "[Ctrl]-[C] pressed: closing logfile."
-        file.close()
+        netio = None
+        logfile.close()
 
 
 if __name__ == '__main__':
