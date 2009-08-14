@@ -36,7 +36,7 @@ import time
 
 host = "192.168.100.3"
 defaultFilename = "./logged_data.txt"
-refVoltage = 2.5
+refVoltage = 4.36
 
 def main():
     

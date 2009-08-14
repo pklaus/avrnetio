@@ -17,7 +17,7 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with avrnetio.  If not, see <http://www.gnu.org/licenses/>.
+#   along with avrnetio.  If not, see <http:#www.gnu.org/licenses/>.
 
 
 
@@ -114,7 +114,7 @@ class avrnetio(object):
         self.disconnect()
     
     def disconnect(self):
-	    # close the socket:
+        # close the socket:
         self.__s.close()
     
     def __del__(self):
