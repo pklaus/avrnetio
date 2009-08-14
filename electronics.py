@@ -31,11 +31,27 @@ import math
 
 # NTCs are temperature dependent resistors.
 class ntc(object):
-    
+    #
+    #     U_VCC
+    #     ---+
+    #        #
+    #        #  serial constant resistor R   (10k)
+    #        #
+    #        |---------> U_NTC 
+    #        #
+    #        #   NTC R_NTC  (4.7k)
+    #        #
+    #     ---+
+    #     GND
+    #
     def __init__(self, RN0=4700.0, TN0 = 25.0+273.0, B0 = 3977.0):
         self.RN0 = RN0
         self.TN0 = TN0
         self.B0 = B0
+        # R = 10000 Ohm
+        self.serialResistance=10000.0
+        # U_VCC = 5V
+        self.Uvcc = 5.0
 
     # we want to calculate the temperature T at a measured resistance R of the NTC
     # http://tuxgraphics.org/common/images2/article07051/Ntcformula.gif
@@ -46,32 +62,12 @@ class ntc(object):
     
     
     # NTC voltage -> NTC resistance   for connected voltage dividers
-    #
-    #     5V
-    #     ---+
-    #        #
-    #        # 10k constant resistor
-    #        #
-    #        |---------> Uadc 
-    #        #
-    #        # ntc 4.7k
-    #        #
-    #     ---+
-    #     GND
-    #
     def calculateResistanceOfNTC(self, Untc):
-        
-        # R_NTC   =   R / ( U_VCC / U_ADC - 1)
-        # R = 10000 Ohm
-        r = 10000.0
-        # U_VCC = 5V
-        Uvcc = 5.0
-        # U_ADC = ADCvalue/1024 * U_REF
-        
+        # R_NTC   =   R / ( U_VCC / U_NTC - 1)
         if (Untc <= 0):
             # never divide by zero:
             Untc=0.001;
-        ohm= r / (( Uvcc / Untc ) - 1 );
+        ohm= self.serialResistance / (( self.Uvcc / Untc ) - 1 );
         return ohm
     
     

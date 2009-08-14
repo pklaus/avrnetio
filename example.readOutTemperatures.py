@@ -49,6 +49,7 @@ def main():
     
     
     temperature = electronics.ntc()
+    temperature.Uvcc = refVoltage
     
     # print response
     print "\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------"
