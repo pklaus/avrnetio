@@ -74,6 +74,9 @@ class avrnetio(object):
     #    self.__sendRequest("time " + time.time()dt.strftime() )
     def getSystemTime(self):
         return self.__sendRequest("time")
+        
+    def getSystemDate(self):
+        return self.__sendRequest("date")
     
     def getSystemUptime(self):
         return self.__sendRequest("whm")

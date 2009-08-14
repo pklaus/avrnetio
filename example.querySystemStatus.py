@@ -41,14 +41,16 @@ def main():
         print("could not connect")
         sys.exit(1)
     systemTime = netio.getSystemTime()
-    systemUptime = netio.getSystemUptime()
+    systemDate = netio.getSystemDate()
+    systemUptime = netio.getSystemUptime().split(":")
     
     netio = None
     
     # print response
     print "\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------"
-    print "system time: %s" % (systemTime)
-    print "system uptime: %s" % (systemUptime)
+    print "system unix time string: %s" % (systemTime)
+    print "system date and time: %s" % (systemDate)
+    print "system uptime: %s hours and %s minutes" % (systemUptime[0],systemUptime[1])
     print "---------------------------------------------------------------- \n"
     
 
