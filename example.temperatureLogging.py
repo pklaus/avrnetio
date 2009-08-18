@@ -71,23 +71,34 @@ def main():
         except StandardError as e:
             print("could not connect" + e.value)
             raise KeyboardInterrupt()
-        temperature = electronics.ntc()
+        temperature = electronics.ntc(4700.0,25.0+273,9000.0)
         temperature.Uvcc = refVoltage
+        i=0
+        numberErrors=0
         while 1:
             try:
                 NTCvoltage = netio.getADCsAsVolts()[ntpADCport]
             except NameError, message:
                 print(message)
-                raise KeyboardInterrupt()
+                numberErrors+=1
+                #raise KeyboardInterrupt()
             except StandardError, message:
                 print(message)
+                numberErrors+=1
                 #print("AVR-NET-IO not available anymore. EXITING.")
+                #raise KeyboardInterrupt()
+            if numberErrors==10:
                 raise KeyboardInterrupt()
-            
+            if numberErrors>0:
+                continue
+            numberErrors=0
             
             logfile.write("%s: %.1f °C" % ( datetime.now() , temperature.NTCpotentialToTemp(NTCvoltage)-273))
             logfile.write("\n")
             time.sleep(1)
+            if i%60==0 :
+                logfile.flush()
+            i+=1
     
     except KeyboardInterrupt:
         print "[Ctrl]-[C] pressed: closing logfile."

@@ -48,7 +48,7 @@ def main():
     netio = None
     
     
-    temperature = electronics.ntc()
+    temperature = electronics.ntc(4700.0,25.0+273,9000.0)
     temperature.Uvcc = refVoltage
     
     # print response

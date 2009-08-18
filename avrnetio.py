@@ -56,9 +56,9 @@ class avrnetio(object):
         self.__bufsize = 1024
         self.__refEP = None
         # create a TCP/IP socket
-        self.__s = socket(AF_INET, SOCK_STREAM)
-        self.__s.settimeout(6)
- 
+        #self.__s = socket(AF_INET, SOCK_STREAM)
+        #self.__s.settimeout(6)
+    
     def __login(self):
         # connect to the server
         try:
@@ -68,6 +68,7 @@ class avrnetio(object):
         except error:# some other socket error
             raise NameError("No connection to endpoint " + self.__host)
             return False
+            self.disconnect()
         return True
     
     #def setSystemTime(self,dt):
@@ -94,7 +95,7 @@ class avrnetio(object):
         self.__refEP = referenceEP
     
     def __10bitIntToVolt(self, Integer):
-        return Integer/1024.0*self.__refEP
+        return Integer/1023.0*self.__refEP
     
     def getADCsAsVolts(self):
         if self.__refEP == None:
