@@ -31,20 +31,30 @@ import math
 
 # NTCs are temperature dependent resistors.
 class ntc(object):
-    #
-    #     U_VCC
-    #     ---+
-    #        #
-    #        #  serial constant resistor R   (10k)
-    #        #
-    #        |---------> U_NTC 
-    #        #
-    #        #   NTC R_NTC  (4.7k)
-    #        #
-    #     ---+
-    #     GND
-    #
+    """ Class to calculate the temperature of a NTC thermistor ( see http://en.wikipedia.org/wiki/Thermistor )
+    
+     formula that has been used is also found here: http://en.wikipedia.org/wiki/Thermistor#B_parameter_equation
+     better alternative, the Steinhart-Hart equation: http://en.wikipedia.org/wiki/Thermistor#Steinhart-Hart_equation
+    
+    setup of the NTC in your circuit
+    
+         U_VCC
+         ---+
+            #
+            #  serial constant resistor R   (10k)
+            #
+            |---------> U_NTC 
+            #
+            #   NTC R_NTC  (4.7k)
+            #
+         ---+
+         GND
+         
+    """
+    
     def __init__(self, RN0=4700.0, TN0 = 25.0+273.0, B0 = 3977.0):
+        """ custom constructor
+        RN0: Resistance at temperature TN0,   B0: coefficient """
         self.RN0 = RN0
         self.TN0 = TN0
         self.B0 = B0
