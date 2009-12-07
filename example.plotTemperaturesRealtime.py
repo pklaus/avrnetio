@@ -24,7 +24,7 @@
 # example how to use the avrnetio class
 
 import time
-import pylab
+import pylab # needs matplotlib:  sudo aptitude install python-matplotlib
 
 ## import the avrnetio class:
 import avrnetio
