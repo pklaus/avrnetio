@@ -107,7 +107,10 @@ class avrnetio(object):
     
     # generic method to send requests to the NET-IO 230A and checking the response
     def __sendRequest(self,request,complainIfAnswerNot250=True):
-        self.__login()
+        try:
+            self.__s
+        except:
+            self.__login()
         self.__s.send(request+"\n")
         data = self.__s.recv(self.__bufsize)
         #if re.search("^250 ", data) == None and complainIfAnswerNot250:
@@ -115,7 +118,6 @@ class avrnetio(object):
         #    return None
         #else:
         return data.replace("\n","")
-        self.disconnect()
     
     def disconnect(self):
         # close the socket:

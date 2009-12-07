@@ -33,7 +33,7 @@ import sys
 import electronics
 
 
-host = "192.168.100.3"
+host = "192.168.102.3"
 refVoltage = 4.36
 
 def main():

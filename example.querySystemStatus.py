@@ -31,7 +31,7 @@ import pdb
 import sys
 
 
-host = "192.168.100.3"
+host = "192.168.102.3"
 
 
 def main():
@@ -47,11 +47,11 @@ def main():
     netio = None
     
     # print response
-    print "\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------"
-    print "system unix time string: %s" % (systemTime)
-    print "system date and time: %s" % (systemDate)
-    print "system uptime: %s hours and %s minutes" % (systemUptime[0],systemUptime[1])
-    print "---------------------------------------------------------------- \n"
+    print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
+    print("system unix time string: %s" % (systemTime) )
+    print("system date and time: %s" % (systemDate) )
+    print("system uptime: %s hours and %s minutes" % (systemUptime[0],systemUptime[1]) )
+    print("---------------------------------------------------------------- \n")
     
 
 if __name__ == '__main__':
