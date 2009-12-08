@@ -3,6 +3,8 @@
 
 # Author: Philipp Klaus, philipp.l.klaus AT web.de
 
+# 480 / sec   on wolfdale, local network
+#  17 / sec   on laptop: uni WLAN FLUGHAFEN
 
 #   This file is part of avrnetio.
 #
