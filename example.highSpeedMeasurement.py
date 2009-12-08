@@ -37,8 +37,6 @@ import electronics
 from time import time
 
 AVRNETIO_HOST = "192.168.102.3"
-SERIAL_DEVICE='/dev/ttyS0'
-SERIAL_BAUD=115200
 REFERENCE_VOLTAGE=4.36
 NTC_ADC=4
 NTC_R0=4700.0
@@ -48,7 +46,6 @@ NTC_B=3500
 def main():
     try:
         netio = avrnetio.avrnetio(AVRNETIO_HOST)
-        netio.set_serial_mode(SERIAL_DEVICE,SERIAL_BAUD)
         netio.setRefEP(REFERENCE_VOLTAGE)
     except StandardError:
         print("could not connect")
