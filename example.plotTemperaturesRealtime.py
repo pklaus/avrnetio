@@ -38,12 +38,12 @@ import electronics
 import array
 
 
-HOST = "sklaus.selfip.org"
+HOST = "192.168.102.3"
 REFERENCE_VOLTAGE = 4.36
 ADC_NTC = 4
 
 SECONDS_DISPLAYED = 5
-RATE=16.0
+RATE=100.0
 
 SMOOTHING_FACTOR = int(RATE)
 
@@ -91,7 +91,8 @@ def main():
         end = max(rawtemp)+0.05*diff+0.5
         timesub.set_ylim(begin,end)
         pylab.draw()
-        time.sleep(1/rate-0.03)
+        sleep=1/rate-0.03
+        time.sleep(sleep if sleep>0 else 0)
         count+=1
         if count %int(rate) == 0: print "1 second passed:", time.time()
     

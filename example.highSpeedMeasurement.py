@@ -59,7 +59,7 @@ def main():
     duration=[]
     while test_duration>0:
         s = time()
-        netio.getADCsAsVolts()[4]
+        netio.getADCsAsVolts()[NTC_ADC]
         duration.append(time()-s)
         counter+=1
         if time()-start>=1.0:
