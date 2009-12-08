@@ -38,34 +38,14 @@ import electronics
 import array
 
 
-HOST = "192.168.102.3"
+HOST = "sklaus.selfip.org"
 REFERENCE_VOLTAGE = 4.36
+ADC_NTC = 4
 
-SECONDS_DISPLAYED = 10
-RATE=28.0
+SECONDS_DISPLAYED = 5
+RATE=16.0
 
 SMOOTHING_FACTOR = int(RATE)
-
-
-class Fifo:
-    'Fastest implementation of FIFO queues http://code.activestate.com/recipes/68436/#c3'
-    def __init__(self):
-        self.nextin = 0
-        self.nextout = 0
-        self.data = {}
-    def append(self, value):
-        self.data[self.nextin] = value
-        self.nextin += 1
-    def pop(self, n=-1):
-        value = self.data[self.nextout]
-        del self.data[self.nextout]
-        self.nextout += 1
-        return value
-    def get_all(self):
-        lst = []
-        for i in range(self.nextin-self.nextout):
-            lst.append(self.data[i+self.nextout])
-        return lst
 
 
 def main():
@@ -83,32 +63,32 @@ def main():
     timefig = pylab.figure(1)
     timesub = pylab.subplot(111)
     
+    pylab.grid()
+    
     seconds_displayed=SECONDS_DISPLAYED
     rate=RATE
     dt = 1/rate
-    tim = Fifo()
-    rawtemp = Fifo()
+    tim = []
+    rawtemp = []
     for i in range(int(seconds_displayed*rate)):
         tim.append(dt*i)
     for i in range(int(seconds_displayed*rate)+SMOOTHING_FACTOR-1):
-        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[4])-273)
-    t = tim.get_all()
-    h = ema(rawtemp.get_all(),SMOOTHING_FACTOR)
-    lines = pylab.plot(t,h)
-    lines2 = pylab.plot(t,rawtemp.get_all()[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
+        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[ADC_NTC])-273)
+    smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
+    lines = pylab.plot(tim,smoothtemp)
+    lines2 = pylab.plot(tim,rawtemp[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
     count = 0
     for i in range(1500):
-        tim.append(tim.pop() + dt*rate*seconds_displayed)
-        t = tim.get_all()
-        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[4])-273)
-        rawtemp.pop()
-        h = ema(rawtemp.get_all(),SMOOTHING_FACTOR)
-        lines[0].set_data(t,h)
-        lines2[0].set_data(t,rawtemp.get_all()[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
-        timesub.set_xlim((t[0],t[-1]))
-        diff = max(h)-min(h)
-        begin = min(h)-0.05*diff-0.5
-        end = max(h)+0.05*diff+0.5
+        tim.append(tim.pop(0) + dt*rate*seconds_displayed)
+        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[ADC_NTC])-273)
+        rawtemp.pop(0)
+        smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
+        lines[0].set_data(tim,smoothtemp)
+        lines2[0].set_data(tim,rawtemp[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
+        timesub.set_xlim((tim[0],tim[-1]))
+        diff = max(rawtemp)-min(rawtemp)
+        begin = min(rawtemp)-0.05*diff-0.5
+        end = max(rawtemp)+0.05*diff+0.5
         timesub.set_ylim(begin,end)
         pylab.draw()
         time.sleep(1/rate-0.03)
