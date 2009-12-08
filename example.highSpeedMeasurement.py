@@ -34,33 +34,48 @@ import sys
 ## for NTC calculations
 import electronics
 
-from datetime import datetime
+from time import time
 
-host = "192.168.102.3"
-refVoltage = 4.36
+AVRNETIO_HOST = "192.168.102.3"
+SERIAL_DEVICE='/dev/ttyS0'
+SERIAL_BAUD=115200
+REFERENCE_VOLTAGE=4.36
+NTC_ADC=4
+NTC_R0=4700.0
+NTC_T0=25.0
+NTC_B=3500
 
 def main():
     try:
-        netio = avrnetio.avrnetio(host)
-        netio.setRefEP(refVoltage)
+        netio = avrnetio.avrnetio(AVRNETIO_HOST)
+        netio.set_serial_mode(SERIAL_DEVICE,SERIAL_BAUD)
+        netio.setRefEP(REFERENCE_VOLTAGE)
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    temperature = electronics.ntc(4700.0,25.0+273,9000.0)
-    temperature.Uvcc = refVoltage
-    
+    temperature = electronics.ntc(NTC_R0,NTC_T0+273.15,NTC_B)
+    temperature.Uvcc = REFERENCE_VOLTAGE
+
     test_duration = 10 # seconds
     counter = 0
-    start = datetime.now()
+    start = time()
+    duration=[]
     while test_duration>0:
+        s = time()
         netio.getADCsAsVolts()[4]
+        duration.append(time()-s)
         counter+=1
-        if (datetime.now()-start).seconds>=1.0:
+        if time()-start>=1.0:
             print "rate: ",counter,"per second"
             counter=0
-            start = datetime.now()
             test_duration-=1
+            start = time()
     netio = None
+
+    totalDuration = 0
+    for dur in duration:
+        totalDuration += dur
+    print "average duration: ", totalDuration/len(duration)
     
 
 if __name__ == '__main__':

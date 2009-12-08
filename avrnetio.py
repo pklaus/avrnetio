@@ -45,6 +45,10 @@ import time
 #from datetime import date
 from datetime import datetime
 
+import serial
+
+LINE_END="\n"
+
 class avrnetio(object):
 
     def __init__(self, host, username="", password="", secureLogin=False):
@@ -55,13 +59,12 @@ class avrnetio(object):
         self.__port = 2701
         self.__bufsize = 1024
         self.__refEP = None
-        # create a TCP/IP socket
-        #self.__s = socket(AF_INET, SOCK_STREAM)
-        #self.__s.settimeout(6)
+        self.__serial_mode = False
     
     def __login(self):
         # connect to the server
         try:
+            # create a TCP/IP socket
             self.__s = socket(AF_INET, SOCK_STREAM)
             self.__s.settimeout(6)
             self.__s.connect((self.__host, self.__port))
@@ -71,6 +74,11 @@ class avrnetio(object):
             self.disconnect()
         return True
     
+    def set_serial_mode(self, device="/dev/ttyS0", baud=115200):
+        self.__serial_device = device
+        self.__serial_mode = True
+        self.__serial_baud = baud
+        
     #def setSystemTime(self,dt):
     #    self.__sendRequest("time " + time.time()dt.strftime() )
     def getSystemTime(self):
@@ -100,28 +108,47 @@ class avrnetio(object):
     def getADCsAsVolts(self):
         if self.__refEP == None:
             raise NameError("Please set reference electrical potential first.")
-        ADCs = self.getADCs()
-        ADCs = map(self.__10bitIntToVolt,ADCs)
-        return ADCs
+        return map(self.__10bitIntToVolt,self.getADCs())
     
     
     # generic method to send requests to the NET-IO 230A and checking the response
     def __sendRequest(self,request,complainIfAnswerNot250=True):
+        # RS232 mode:
+        if self.__serial_mode:
+            try:
+                self.__serial
+            except:
+                self.__serial = serial.Serial(self.__serial_device, self.__serial_baud, timeout=2)
+                print "(re)connecting serial"
+            self.__serial.write(request+LINE_END)                  # send the request
+            self.__serial.readline()
+            return self.__serial.readline().replace(LINE_END,"")   # read a '\n' terminated line
+        # network mode
         try:
             self.__s
         except:
             self.__login()
-        self.__s.send(request+"\n")
+            print "(re)connecting network"
+        s = time.time()
+        self.__s.send(request+LINE_END)
+        s = time.time()
         data = self.__s.recv(self.__bufsize)
         #if re.search("^250 ", data) == None and complainIfAnswerNot250:
         #    raise NameError("Error while sending request: " + request + "\nresponse from NET-IO 230A is:  " + data)
         #    return None
         #else:
-        return data.replace("\n","")
+        return data.replace(LINE_END,"")
     
     def disconnect(self):
-        # close the socket:
-        self.__s.close()
+        try:
+            if self.__serial_mode:
+                self.__serial
+            else:
+                # close the network socket:
+                self.__s.close()
+        except:
+            pass
+            
     
     def __del__(self):
         self.disconnect()

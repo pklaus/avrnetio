@@ -55,7 +55,7 @@ def main():
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    temperature = electronics.ntc(4700.0,25.0+273,3977.0)
+    temperature = electronics.ntc(4700.0,25.0+273,3548.0)
     temperature.Uvcc = REFERENCE_VOLTAGE
     
     pylab.ion() # interactive mode on
