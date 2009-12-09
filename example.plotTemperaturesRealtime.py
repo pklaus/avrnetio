@@ -35,7 +35,7 @@ import sys
 ## for NTC calculations
 import electronics
 
-import array
+import array # for ema() ( uses array.array() )
 
 
 HOST = "192.168.102.3"
@@ -43,7 +43,7 @@ REFERENCE_VOLTAGE = 4.36
 ADC_NTC = 4
 
 SECONDS_DISPLAYED = 5
-RATE=100.0
+RATE=40.0
 
 SMOOTHING_FACTOR = int(RATE)
 
@@ -70,31 +70,40 @@ def main():
     dt = 1/rate
     tim = []
     rawtemp = []
-    for i in range(int(seconds_displayed*rate)):
-        tim.append(dt*i)
+    start = time.time()
     for i in range(int(seconds_displayed*rate)+SMOOTHING_FACTOR-1):
         rawtemp.append(temperature.ntc_potential_to_temp(netio.get_adcs_as_volts()[ADC_NTC])-273)
+        if i < int(seconds_displayed*rate):
+            tim.append(time.time()-start)
+        #time.sleep(0.001)
     smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
     lines = pylab.plot(tim,smoothtemp)
     lines2 = pylab.plot(tim,rawtemp[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
     count = 0
+    cycle_start = time.time()
     for i in range(1500):
-        tim.append(tim.pop(0) + dt*rate*seconds_displayed)
+        tim.append(time.time()-start)
+        tim.pop(0)
         rawtemp.append(temperature.ntc_potential_to_temp(netio.get_adcs_as_volts()[ADC_NTC])-273)
         rawtemp.pop(0)
         smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
         lines[0].set_data(tim,smoothtemp)
         lines2[0].set_data(tim,rawtemp[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
-        timesub.set_xlim((tim[0],tim[-1]))
-        diff = max(rawtemp)-min(rawtemp)
-        begin = min(rawtemp)-0.05*diff-0.5
-        end = max(rawtemp)+0.05*diff+0.5
+        timesub.set_xlim((float("%.3f" % tim[0]),float("%.3f" % tim[-1])))
+        diff = max(smoothtemp)-min(smoothtemp)
+        begin = min(smoothtemp)-0.05*diff-0.13
+        end = max(smoothtemp)+0.05*diff+0.13
         timesub.set_ylim(begin,end)
-        pylab.draw()
-        sleep=1/rate-0.03
+        #if count==0: print "", time.time()-start
+        pylab.draw()  # takes up to 0.10 seconds on wolfdale workstation
+        #if count==0: print "pylab.draw", time.time()-start
+        sleep=1/rate-0.04
         time.sleep(sleep if sleep>0 else 0)
         count+=1
-        if count %int(rate) == 0: print "1 second passed:", time.time()
+        if time.time()-cycle_start>=1.0:
+            print "rate set: ", rate, "rate achieved: ", count/1.0
+            cycle_start=time.time()
+            count=0
     
     netio = None
 
