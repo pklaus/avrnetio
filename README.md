@@ -1,11 +1,14 @@
-# avrnetio: A Python class to interface the Pollin AVR-NET-IO via ECMD TCP/IP commands.
+# avrnetio  ... a free measurement framework for the ethersex platform written in Python.
 
 ## Project Information
 
-This software (avrnetio) provides an interface via TCP to control 
-the Pollin AVR-NET-IO running the ethersex firmware <ethersex.de>.
-The software consists of a class to represent the possibilities of 
+This software (avrnetio) provides a comfortable way to communicate with any hardware
+running the ethersex firmware <http://ethersex.de> via TCP/RS232.
+This includes on the hardware side the commercial Pollin AVR-NET-IO, wich gave the project its name.
+The software consists of a Python class to represent the possibilities of 
 the product and example code to show how to use it.
+
+Find more information on <http://pklaus.github.com/avrnetio>.
 
 ## Moving Forward
 
