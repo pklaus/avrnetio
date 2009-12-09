@@ -45,13 +45,13 @@ NTC_B=3500
 
 def main():
     try:
-        netio = avrnetio.avrnetio('')
+        netio = avrnetio.Avrnetio('')
         netio.set_serial_mode(SERIAL_DEVICE,SERIAL_BAUD)
-        netio.setRefEP(REFERENCE_VOLTAGE)
+        netio.set_ref_ep(REFERENCE_VOLTAGE)
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    temperature = electronics.ntc(NTC_R0,NTC_T0+273.15,NTC_B)
+    temperature = electronics.Ntc(NTC_R0,NTC_T0+273.15,NTC_B)
     temperature.Uvcc = REFERENCE_VOLTAGE
     
     test_duration = 10 # seconds
@@ -60,7 +60,7 @@ def main():
     duration=[]
     while test_duration>0:
         s = time()
-        netio.getADCsAsVolts()[NTC_ADC]
+        netio.get_adcs_as_volts()[NTC_ADC]
         duration.append(time()-s)
         counter+=1
         if time()-start>=1.0:

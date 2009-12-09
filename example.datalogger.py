@@ -34,7 +34,7 @@ from optparse import OptionParser
 ## for time.sleep()
 import time
 
-host = "192.168.100.3"
+host = "192.168.102.3"
 defaultFilename = "./logged_data.txt"
 refVoltage = 4.36
 
@@ -61,15 +61,15 @@ def main():
     
     try:
         try:
-            netio = avrnetio.avrnetio(host)
-            netio.setRefEP(refVoltage)
+            netio = avrnetio.Avrnetio(host)
+            netio.set_ref_ep(refVoltage)
         except StandardError as e:
             print("could not connect" + e.value)
             raise KeyboardInterrupt()
         while 1:
             try:
-                ADCs = netio.getADCs()
-                ADCsInVolts = netio.getADCsAsVolts()
+                ADCs = netio.get_adcs()
+                ADCsInVolts = netio.get_adcs_as_volts()
             except NameError, message:
                 print(message)
                 raise KeyboardInterrupt()

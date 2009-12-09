@@ -34,27 +34,27 @@ import electronics
 
 
 host = "192.168.102.3"
-refVoltage = 4.36
+refVoltage = 5
 
 def main():
     try:
-        netio = avrnetio.avrnetio(host)
-        netio.setRefEP(refVoltage)
+        netio = avrnetio.Avrnetio(host)
+        netio.set_ref_ep(refVoltage)
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    NTCvoltage = netio.getADCsAsVolts()[4]
+    ntc_voltage = netio.get_adcs_as_volts()[4]
     
     netio = None
     
     
-    temperature = electronics.ntc(4700.0,25.0+273,9000.0)
+    temperature = electronics.Ntc(4700.0,25.0+273,3580.0)
     temperature.Uvcc = refVoltage
     
     # print response
     print "\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------"
-    print "NTC voltage: %.3f V" % (NTCvoltage)
-    print "temperature: %.1f °C" % (temperature.NTCpotentialToTemp(NTCvoltage)-273)
+    print "NTC voltage: %.3f V" % (ntc_voltage)
+    print "temperature: %.1f °C" % (temperature.ntc_potential_to_temp(ntc_voltage)-273)
     print "---------------------------------------------------------------- \n"
     
 

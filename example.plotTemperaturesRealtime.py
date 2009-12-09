@@ -50,12 +50,12 @@ SMOOTHING_FACTOR = int(RATE)
 
 def main():
     try:
-        netio = avrnetio.avrnetio(HOST)
-        netio.setRefEP(REFERENCE_VOLTAGE)
+        netio = avrnetio.Avrnetio(HOST)
+        netio.set_ref_ep(REFERENCE_VOLTAGE)
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    temperature = electronics.ntc(4700.0,25.0+273,3548.0)
+    temperature = electronics.Ntc(4700.0,25.0+273,3548.0)
     temperature.Uvcc = REFERENCE_VOLTAGE
     
     pylab.ion() # interactive mode on
@@ -73,14 +73,14 @@ def main():
     for i in range(int(seconds_displayed*rate)):
         tim.append(dt*i)
     for i in range(int(seconds_displayed*rate)+SMOOTHING_FACTOR-1):
-        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[ADC_NTC])-273)
+        rawtemp.append(temperature.ntc_potential_to_temp(netio.get_adcs_as_volts()[ADC_NTC])-273)
     smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
     lines = pylab.plot(tim,smoothtemp)
     lines2 = pylab.plot(tim,rawtemp[SMOOTHING_FACTOR-1:int(seconds_displayed*rate+SMOOTHING_FACTOR)])
     count = 0
     for i in range(1500):
         tim.append(tim.pop(0) + dt*rate*seconds_displayed)
-        rawtemp.append(temperature.NTCpotentialToTemp(netio.getADCsAsVolts()[ADC_NTC])-273)
+        rawtemp.append(temperature.ntc_potential_to_temp(netio.get_adcs_as_volts()[ADC_NTC])-273)
         rawtemp.pop(0)
         smoothtemp = ema(rawtemp,SMOOTHING_FACTOR)
         lines[0].set_data(tim,smoothtemp)

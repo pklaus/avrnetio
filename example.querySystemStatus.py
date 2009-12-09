@@ -36,21 +36,21 @@ host = "192.168.102.3"
 
 def main():
     try:
-        netio = avrnetio.avrnetio(host)
+        netio = avrnetio.Avrnetio(host)
     except StandardError:
         print("could not connect")
         sys.exit(1)
-    systemTime = netio.getSystemTime()
-    systemDate = netio.getSystemDate()
-    systemUptime = netio.getSystemUptime().split(":")
+    system_time = netio.get_system_time()
+    system_date = netio.get_system_date()
+    system_uptime = netio.get_system_uptime().split(":")
     
     netio = None
     
     # print response
     print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
-    print("system unix time string: %s" % (systemTime) )
-    print("system date and time: %s" % (systemDate) )
-    print("system uptime: %s hours and %s minutes" % (systemUptime[0],systemUptime[1]) )
+    print("system unix time string: %s" % (system_time) )
+    print("system date and time: %s" % (system_date) )
+    print("system uptime: %s hours and %s minutes" % (system_uptime[0],system_uptime[1]) )
     print("---------------------------------------------------------------- \n")
     
 

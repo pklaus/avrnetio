@@ -30,7 +30,7 @@ import math
 
 
 # NTCs are temperature dependent resistors.
-class ntc(object):
+class Ntc(object):
     """ Class to calculate the temperature of a NTC thermistor ( see http://en.wikipedia.org/wiki/Thermistor )
     
      formula that has been used is also found here: http://en.wikipedia.org/wiki/Thermistor#B_parameter_equation
@@ -59,29 +59,29 @@ class ntc(object):
         self.TN0 = TN0
         self.B0 = B0
         # R = 10000 Ohm
-        self.serialResistance=10000.0
+        self.serial_resistance=10000.0
         # U_VCC = 5V
         self.Uvcc = 5.0
 
     # we want to calculate the temperature T at a measured resistance R of the NTC
     # http://tuxgraphics.org/common/images2/article07051/Ntcformula.gif
     # takes the value of an electrical resistance [Ohm] and gives back a temperature [K]
-    def NTCresitanceToTemp(self, resistance):
+    def ntc_resitance_to_temp(self, resistance):
         temperature = 1/(math.log(resistance/self.RN0)/self.B0+1/self.TN0)
         return temperature
     
     
     # NTC voltage -> NTC resistance   for connected voltage dividers
-    def calculateResistanceOfNTC(self, Untc):
+    def calculate_resistance_of_ntc(self, Untc):
         # R_NTC   =   R / ( U_VCC / U_NTC - 1)
         if (Untc <= 0):
             # never divide by zero:
             Untc=0.001;
-        ohm= self.serialResistance / (( self.Uvcc / Untc ) - 1 );
+        ohm= self.serial_resistance / (( self.Uvcc / Untc ) - 1 );
         return ohm
     
     
-    def NTCpotentialToTemp(self, potential):
-        return self.NTCresitanceToTemp(self.calculateResistanceOfNTC(potential))
+    def ntc_potential_to_temp(self, potential):
+        return self.ntc_resitance_to_temp(self.calculate_resistance_of_ntc(potential))
 
 

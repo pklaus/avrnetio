@@ -38,7 +38,7 @@ from datetime import datetime
 ## for ntc
 import electronics
 
-host = "192.168.100.3"
+host = "192.168.102.3"
 defaultFilename = "./logged_temperature.txt"
 refVoltage = 4.36
 ntpADCport = 4
@@ -66,18 +66,18 @@ def main():
     
     try:
         try:
-            netio = avrnetio.avrnetio(host)
-            netio.setRefEP(refVoltage)
+            netio = avrnetio.Avrnetio(host)
+            netio.set_ref_ep(refVoltage)
         except StandardError as e:
             print("could not connect" + e.value)
             raise KeyboardInterrupt()
-        temperature = electronics.ntc(4700.0,25.0+273,9000.0)
+        temperature = electronics.Ntc(4700.0,25.0+273,9000.0)
         temperature.Uvcc = refVoltage
         i=0
         numberErrors=0
         while 1:
             try:
-                NTCvoltage = netio.getADCsAsVolts()[ntpADCport]
+                ntc_voltage = netio.get_adcs_as_volts()[ntpADCport]
             except NameError, message:
                 print(message)
                 numberErrors+=1
@@ -93,7 +93,7 @@ def main():
                 continue
             numberErrors=0
             
-            logfile.write("%s: %.1f °C" % ( datetime.now() , temperature.NTCpotentialToTemp(NTCvoltage)-273))
+            logfile.write("%s: %.1f °C" % ( datetime.now() , temperature.ntc_potential_to_temp(ntc_voltage)-273))
             logfile.write("\n")
             time.sleep(1)
             if i%60==0 :
