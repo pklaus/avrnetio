@@ -56,7 +56,7 @@ BUFF_SIZE = 1024 # OK as long as ECMDs do not return anything longer than this..
 class Avrnetio(object):
     """ Avrnetio is the representation of the hardware running the ethersex firmware. It can be used to send ECMDs via TCP/IP or via RS232. """
     
-    def __init__(self, host='', username="", password="", secure_login=False, port = 2701):
+    def __init__(self, host='', username="", password="", secure_login=False, port = 2701, tcp_mode = True):
         """ custom constructor:
         
         host:                the network IP or hostname of the avrnetio to interface.
@@ -69,6 +69,7 @@ class Avrnetio(object):
         self.__password = password
         self.__secureLogin = secure_login
         self.__port = port
+        self.__tcp_mode = tcp_mode
         self.__bufsize = BUFF_SIZE
         self.__refEP = None         # has to be set during operation
         self.__serial_mode = False  # has to be set during operation
@@ -77,9 +78,12 @@ class Avrnetio(object):
         """ log in using TCP/IP"""
         try:
             # create the socket
-            self.__s = socket(AF_INET, SOCK_STREAM)
+            if self.__tcp_mode:
+                self.__s = socket(AF_INET, SOCK_STREAM)
+                self.__s.connect((self.__host, self.__port))
+            else:
+                self.__s = socket(AF_INET, SOCK_DGRAM)
             self.__s.settimeout(6)
-            self.__s.connect((self.__host, self.__port))
         except error: # some socket error
             raise NameError("No connection to endpoint " + self.__host)
             return False
@@ -149,10 +153,12 @@ class Avrnetio(object):
         except:
             self.__login()
             print "(re)connecting network"
-        s = time.time()
-        self.__s.send(request+LINE_END)
-        s = time.time()
-        data = self.__s.recv(self.__bufsize)
+        if self.__tcp_mode:
+            self.__s.send(request+LINE_END)
+            data = self.__s.recv(self.__bufsize)
+        else:
+            self.__s.sendto(request+LINE_END, (self.__host, self.__port) )
+            data = self.__s.recvfrom(self.__bufsize, (self.__host, self.__port) )
         if re.match("parse error", data) != None:
             raise NameError("Error while sending request: " + request + "\nresponse from avrnetio is:  " + data)
             return None
