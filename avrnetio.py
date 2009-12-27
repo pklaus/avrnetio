@@ -45,7 +45,10 @@ import time
 #from datetime import date
 from datetime import datetime
 
-import serial
+try:
+    import serial
+except ImportError:
+    serial = None
 
 LINE_END="\n"
 BUFF_SIZE = 1024 # OK as long as ECMDs do not return anything longer than this...
@@ -85,10 +88,13 @@ class Avrnetio(object):
     
     def set_serial_mode(self, device="/dev/ttyS0", baud=115200):
         """ use this procedure after instantiation of the object to set the communication with the avrnetio to rs232 instead of network."""
-        self.__serial_mode = True
-        self.__serial_device = device
-        self.__serial_baud = baud
-    
+        pdb.set_trace()
+        if serial:
+            self.__serial_mode = True
+            self.__serial_device = device
+            self.__serial_baud = baud
+        else:
+            raise NameError("Trying to set_serial_mode(), but python module pySerial is not installed.")
     def get_system_time(self):
         """ask for the system time of the avrnetio"""
         return self.__send_request("time")
@@ -131,7 +137,10 @@ class Avrnetio(object):
             except:
                 self.__serial = serial.Serial(self.__serial_device, self.__serial_baud, timeout=2)
                 print "(re)connecting serial"
-            self.__serial.write(request+LINE_END)                  # send the request
+            try:
+                self.__serial.write(request+LINE_END)                  # send the request
+            except serial.serialutil.SerialException:
+                raise NameError("Connection to ethersex device failed. Wrong RS232 port given? Device not powered?")
             self.__serial.readline()
             return self.__serial.readline().replace(LINE_END,"")   # read a '\n' terminated line
         # network mode
