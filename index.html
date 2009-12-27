@@ -2,11 +2,16 @@
 <!-- freecsstemplates.org -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>avrnetio - measurement framework for ethersex written in Python</title>
-<meta name="keywords" content="" />
-<meta name="description" content="" />
-<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>avrnetio - measurement framework for ethersex written in Python</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
+
+	<link rel="stylesheet" href="css/lightbox.css" type="text/css" media="screen" />
+	<script src="js/prototype.js" type="text/javascript"></script>
+	<script src="js/scriptaculous.js?load=effects,builder" type="text/javascript"></script>
+	<script src="js/lightbox.js" type="text/javascript"></script>
 </head>
 <body>
 	<div id="logo">
@@ -34,14 +39,14 @@
 				<h2 class="title"><a href="#">Welcome to avrnetio </a></h2>
 				<p class="meta"><em>Wednesday, December 9, 2009 7:27 PM Posted by <a href="http://github.com/pklaus">PKlaus</a></em></p>
 				<div class="entry">
-					This is a software project written in Python to make interaction with the ethersex platform really easy for you. You can use this project (and the Python classes it contains) as a basis for your data aquisition. This means you can measure voltages, set digital outputs &amp; much more. See <a href="http://ethersex.de">ethersex.de</a> for details about the ethersex project and its capabilities. In contrast to what the project name avrnetio might suppose, you can interact with any ethersex hardware, not just the commercial Pollin AVR-NET-IO.<br />
+					This is a software project written in Python to make interaction with the ethersex platform really easy for you. You can use this project (and the Python classes it contains) as a basis for your data aquisition. This means you can measure voltages, set digital outputs &amp; much more. See <a href="http://ethersex.de">ethersex.de</a> for details about the ethersex project and its capabilities. In contrast to what the project name avrnetio might suppose, you can interact with any ethersex hardware, not just the commercial <a href="http://www.pollin.de/shop/dt/MTQ5OTgxOTk-/Bausaetze/Diverse/Bausatz_AVR_NET_IO.html" alt="Best.Nr. 180 014 ">Pollin AVR-NET-IO.</a><br />
 					<br />The project makes use of python sockets, so you can talk to the ethersex hardware via TCP. It also needs pySerial if you prefer to use a serial connection to query the ethersex platform. For the realtime data display you need matplotlib at the moment. These are the major dependencies.<br />
 					<br />
 					This project is not complete yet. It is a work in progress and you are invited to contribute. If you do not know Python, it will be hard to contribute as the project is thought of as a framework not as a end user product.<br />
 					<br />
-					To give you an impression of the current capabilities of the software have a look at the folloging screenshot: a graphical real-time display of a temperature (in degree centigrade) against time (in seconds) measured using a NTC via a Pollin AVR-NET-IO with ethersex firmware (file: ./example.plotTemperaturesRealtime.py in Repository):<br />
+					To give you an impression of the current capabilities of the software have a look at the folloging screenshot: a graphical real-time display of a temperature (in degree centigrade) against time (in seconds) measured using a NTC via a Pollin AVR-NET-IO with ethersex firmware (file: <a href="http://github.com/pklaus/avrnetio/blob/master/example.plotTemperaturesRealtime.py" alt="file on github.com">./example.plotTemperaturesRealtime.py</a> in Repository):<br />
 					<br />
-					<img src="./realTimeTemperature.png" width="659" height="548" alt="">
+					<a href="images/realTimeTemperature.png" rel="lightbox"><img src="images/realTimeTemperature.png" width="200" alt=""></a>
 				</div>
 			</div>
 		</div><!-- end #content -->
