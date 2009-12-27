@@ -8,7 +8,7 @@
 # cd ~/Downloads/prototype
 # rake dist
 # cd -
-# cp ~/Downloads/prototype/src/prototype.js ./
+# cp ~/Downloads/prototype/dist/prototype.js ./
 
 # and for scriptaculous:
 
@@ -22,7 +22,7 @@ cd ~/Downloads/prototype
 git pull origin master
 rake dist
 cd -
-cp ~/Downloads/prototype/src/prototype.js ./
+cp ~/Downloads/prototype/dist/prototype.js ./
 
 cd ~/Downloads/scriptaculous
 git pull origin master
