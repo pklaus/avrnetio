@@ -80,10 +80,11 @@ class Avrnetio(object):
             # create the socket
             if self.__tcp_mode:
                 self.__s = socket(AF_INET, SOCK_STREAM)
+                self.__s.settimeout(6)
                 self.__s.connect((self.__host, self.__port))
             else:
                 self.__s = socket(AF_INET, SOCK_DGRAM)
-            self.__s.settimeout(6)
+                self.__s.settimeout(6)
         except error: # some socket error
             raise NameError("No connection to endpoint " + self.__host)
             return False
