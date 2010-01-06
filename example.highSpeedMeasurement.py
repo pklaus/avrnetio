@@ -3,8 +3,7 @@
 
 # Author: Philipp Klaus, philipp.l.klaus AT web.de
 
-# 480 / sec   on wolfdale, local network
-#  17 / sec   on laptop: uni WLAN FLUGHAFEN
+#  Results published on <http://ethersex.de/index.php/ECMD_Geschwindigkeit>
 
 #   This file is part of avrnetio.
 #
@@ -42,10 +41,11 @@ NTC_ADC=4
 NTC_R0=4700.0
 NTC_T0=25.0
 NTC_B=3500
+TCP_MODE=True
 
 def main():
     try:
-        netio = avrnetio.Avrnetio(AVRNETIO_HOST)
+        netio = avrnetio.Avrnetio(AVRNETIO_HOST,"","",False,2701,TCP_MODE)
         netio.set_ref_ep(REFERENCE_VOLTAGE)
     except StandardError:
         print("could not connect")
@@ -59,7 +59,10 @@ def main():
     duration=[]
     while test_duration>0:
         s = time()
+        ## To send "adc get":
         netio.get_adcs_as_volts()[NTC_ADC]
+        ## To send "whm":
+        #netio.get_system_uptime()
         duration.append(time()-s)
         counter+=1
         if time()-start>=1.0:
