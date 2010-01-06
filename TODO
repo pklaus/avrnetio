@@ -1,0 +1,7 @@
+TODO:
+
+    * example.plotTemperaturesRealtime.py
+
+    change display to threaded mode as shown in
+    <http://eclecti.cc/files/2009/05/multimeter.py> found on
+    <http://eclecti.cc/wireless/xbee-enabled-arduino-based-wireless-multimeter>

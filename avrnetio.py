@@ -52,6 +52,7 @@ except ImportError:
 
 LINE_END="\n"
 BUFF_SIZE = 1024 # OK as long as ECMDs do not return anything longer than this...
+TIMEOUT = 6
 
 class Avrnetio(object):
     """ Avrnetio is the representation of the hardware running the ethersex firmware. It can be used to send ECMDs via TCP/IP or via RS232. """
@@ -80,11 +81,11 @@ class Avrnetio(object):
             # create the socket
             if self.__tcp_mode:
                 self.__s = socket(AF_INET, SOCK_STREAM)
-                self.__s.settimeout(6)
+                self.__s.settimeout(TIMEOUT)
                 self.__s.connect((self.__host, self.__port))
             else:
                 self.__s = socket(AF_INET, SOCK_DGRAM)
-                self.__s.settimeout(6)
+                self.__s.settimeout(TIMEOUT)
         except error: # some socket error
             raise NameError("No connection to endpoint " + self.__host)
             return False
@@ -159,7 +160,12 @@ class Avrnetio(object):
             data = self.__s.recv(self.__bufsize)
         else:
             self.__s.sendto(request+LINE_END, (self.__host, self.__port) )
-            data = self.__s.recvfrom(self.__bufsize, (self.__host, self.__port) )
+            addr = ('',0)
+            start = time.time()
+            while addr[0] != self.__host:
+                if time.time()-start > TIMEOUT*2:
+                    raise NameError('Did not receive a response from ethersex in time.')
+                data, addr = self.__s.recvfrom(self.__bufsize)
         if re.match("parse error", data) != None:
             raise NameError("Error while sending request: " + request + "\nresponse from avrnetio is:  " + data)
             return None
