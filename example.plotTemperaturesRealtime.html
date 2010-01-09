@@ -26,7 +26,7 @@ possibilities to implements this:
   <head>
     <title>Realtime Temperature Display</title>
     <link href="flot/examples/layout.css" rel="stylesheet" type="text/css"></link>
-    <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+    <!--[if IE]><script language="javascript" type="text/javascript" src="flot/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="flot/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
     <script type="text/javascript" src="JavaSocketBridge/java_socket_bridge.js"></script>
@@ -88,19 +88,6 @@ possibilities to implements this:
 	    window.onload=function(){
   	    setInterval('update_adc()', Math.round(1/rate*1000.0));
 	    }
-
-      $(function () {
-          var d1 = [];
-          for (var i = 0; i < 14; i += 0.5)
-              d1.push([i, Math.sin(i)]);
-
-          var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-          // a null signifies separate line segments
-          var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-          xaxis: { mode: "time" }
-          $.plot($("#placeholder"), [ d1, d2, d3 ], { xaxis: { mode: "time" } });
-      });
     </script>
 
   </head>
@@ -112,7 +99,7 @@ possibilities to implements this:
 		</applet>
 	</div>
 
-	<p id="result"></p>
+	<p>Raw data received from ADC of AVR NETIO:  <span id="result"></span></p>
 
     <div id="placeholder" style="width:1000px;height:600px;"></div>
     
