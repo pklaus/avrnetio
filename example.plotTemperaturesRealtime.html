@@ -1,0 +1,38 @@
+<!--
+
+possibilities to implements this:
+    * flot - a javascript plotting library <http://code.google.com/p/flot/>
+      problem: javascript can't do TCP sockets, so no realtime (but with HTTP we can do it)
+
+    * any javascript library, data via sockets using one of <>
+      
+    * python applet using jython <http://www.jython.org/archive/21/applets/index.html>
+      problem: in newer versions of jython (>2.1) applets are not mentioned anymore
+      more doc: http://oreilly.com/catalog/python2/chapter/ch15.html#41146
+    
+    * a genuine python applet using grail, a python based web browser <http://grail.sourceforge.net/>
+      more doc: http://oreilly.com/catalog/python2/chapter/ch15.html#18563
+    
+    * a genuine java applet
+    
+    * a server side script that writes the data to this HTML file in <PARAM [...]> blocks
+      plotted by the library JavaCharts <http://www.javatao.com/content/view/13/12/>
+-->
+<html>
+  <head>
+    <title>Realtime Temperature Display</title>
+    <meta name="collection" content="exclude">
+  </head>
+  <body> 
+    <h1>MoleculeViewer (example 2)</h1>
+    <hr>
+    <applet code=XYZApp.class width=300 height=300>
+      <param name=model value=models/buckminsterfullerine.xyz>
+        alt="Your browser understands the &lt;APPLET&gt; tag but isn't running the applet, for some reason."
+        Your browser is completely ignoring the &lt;APPLET&gt; tag!
+    </applet>
+    <hr>
+    <a href="XYZApp.java">The source</a>.
+  <script language="JavaScript" src="/js/omi/jsc/s_code_remote.js"></script></body>
+</html>	  
+
