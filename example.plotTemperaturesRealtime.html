@@ -17,22 +17,75 @@ possibilities to implements this:
     
     * a server side script that writes the data to this HTML file in <PARAM [...]> blocks
       plotted by the library JavaCharts <http://www.javatao.com/content/view/13/12/>
+
 -->
-<html>
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
   <head>
     <title>Realtime Temperature Display</title>
-    <meta name="collection" content="exclude">
+    <link href="flot/examples/layout.css" rel="stylesheet" type="text/css"></link>
+    <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
+    <script type="text/javascript" src="JavaSocketBridge/java_socket_bridge.js"></script>
+    <script type="text/javascript">
+      var firstTime = true;
+      
+      var data = [[],[],[],[],[],[],[],[]];
+      
+	    function update_adc(){
+	      if (java_socket_bridge_ready_flag == false) return;
+	      if (firstTime) {
+	        socket_connect('192.168.102.3', 2701);
+	        firstTime = false;
+        }
+		    socket_send("adc get\n");
+	    }
+	    function on_socket_get(message){
+		    document.getElementById('result').innerHTML = message;
+		    
+		    var split = message.split(" ");
+	      for (var i = 0; i < split.length; i++) {
+		      var value = parseInt(split[i], 16);
+		      if (isNaN(value))
+            continue;
+	        data[i].push([new Date().getTime(),value])
+	      }
+		    
+		    $.plot($("#placeholder"), data , { xaxis: { mode: "time" } });
+	    }
+	    window.onload=function(){
+  	    setInterval('update_adc()', 100);
+	    }
+
+      $(function () {
+          var d1 = [];
+          for (var i = 0; i < 14; i += 0.5)
+              d1.push([i, Math.sin(i)]);
+
+          var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
+
+          // a null signifies separate line segments
+          var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
+          xaxis: { mode: "time" }
+          $.plot($("#placeholder"), [ d1, d2, d3 ], { xaxis: { mode: "time" } });
+      });
+    </script>
+
   </head>
   <body> 
-    <h1>MoleculeViewer (example 2)</h1>
+    <h1>Temperature</h1>
     <hr>
-    <applet code=XYZApp.class width=300 height=300>
-      <param name=model value=models/buckminsterfullerine.xyz>
-        alt="Your browser understands the &lt;APPLET&gt; tag but isn't running the applet, for some reason."
-        Your browser is completely ignoring the &lt;APPLET&gt; tag!
-    </applet>
-    <hr>
-    <a href="XYZApp.java">The source</a>.
-  <script language="JavaScript" src="/js/omi/jsc/s_code_remote.js"></script></body>
-</html>	  
+	<div>
+		<applet id="JavaSocketBridge" archive="JavaSocketBridge/JavaSocketBridge.jar" code="JavaSocketBridge.class" width="0" height="0">
+		</applet>
+	</div>
 
+	<p id="result"></p>
+
+    <div id="placeholder" style="width:1000px;height:600px;"></div>
+    
+</body>
+</html>
