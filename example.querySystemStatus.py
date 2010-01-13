@@ -29,12 +29,14 @@ import avrnetio
 import pdb
 ## for sys.exit(1)
 import sys
-
-
-host = "192.168.102.3"
+## for ConfigParser.RawConfigParser()
+import ConfigParser
 
 
 def main():
+    config = ConfigParser.RawConfigParser()
+    config.read('connection.cfg')
+    host = config.get('avrnetio1', 'host')
     try:
         netio = avrnetio.Avrnetio(host)
     except StandardError:

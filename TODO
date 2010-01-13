@@ -1,7 +1,11 @@
 TODO:
 
+    * configuration file:
+      Handling in source files: make sure, the file exists and make sure, it
+      contains the needed configuration entries to not produce any exceptions.
+
     * example.plotTemperaturesRealtime.py
 
-    change display to threaded mode as shown in
-    <http://eclecti.cc/files/2009/05/multimeter.py> found on
-    <http://eclecti.cc/wireless/xbee-enabled-arduino-based-wireless-multimeter>
+      change display to threaded mode as shown in
+      <http://eclecti.cc/files/2009/05/multimeter.py> found on
+      <http://eclecti.cc/wireless/xbee-enabled-arduino-based-wireless-multimeter>

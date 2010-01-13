@@ -3,4 +3,5 @@
 cleanup.sh
 logged_data.txt
 logged_temperature.txt
+connection.cfg
 

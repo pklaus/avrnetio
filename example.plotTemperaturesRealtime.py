@@ -34,12 +34,13 @@ import pdb
 import sys
 ## for NTC calculations
 import electronics
+## for ConfigParser.RawConfigParser()
+import ConfigParser
 
 import array # for ema() ( uses array.array() )
 
+CONFIGURATION_FILE = "connection.cfg"
 
-HOST = "192.168.102.3"
-REFERENCE_VOLTAGE = 4.36
 ADC_NTC = 4
 
 SECONDS_DISPLAYED = 5
@@ -48,7 +49,12 @@ RATE=40.0
 SMOOTHING_FACTOR = int(RATE*4)
 
 
-def main():
+def main():    
+    config = ConfigParser.RawConfigParser()
+    config.read(CONFIGURATION_FILE)
+    HOST = config.get('avrnetio1', 'host')
+    REFERENCE_VOLTAGE = config.getfloat('avrnetio1', 'reference_voltage')
+    
     try:
         netio = avrnetio.Avrnetio(HOST)
         netio.set_ref_ep(REFERENCE_VOLTAGE)

@@ -1,0 +1,5 @@
+[avrnetio1]
+host = 192.168.1.2
+tcp_port = 2701
+reference_voltage = 5.0
+
