@@ -32,11 +32,20 @@ import sys
 ## for ConfigParser.RawConfigParser()
 import ConfigParser
 
+CONFIGURATION_FILE = "connection.cfg"
 
 def main():
-    config = ConfigParser.RawConfigParser()
-    config.read('connection.cfg')
-    host = config.get('avrnetio1', 'host')
+    config = ConfigParser.ConfigParser()
+    try:
+        if config.read(CONFIGURATION_FILE) == []: raise Exception()
+    except:
+        print "error: please make sure you adopted the configuration file:", CONFIGURATION_FILE
+        sys.exit(2)
+    try:
+        host = config.get('avrnetio1', 'host')
+    except:
+        print "error: please make sure your configuration file", CONFIGURATION_FILE, "contains the section", '"avrnetio1"', 'with the entry', '"host"'
+        sys.exit(2)
     try:
         netio = avrnetio.Avrnetio(host)
     except StandardError:

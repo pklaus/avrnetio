@@ -50,7 +50,7 @@ SMOOTHING_FACTOR = int(RATE*4)
 
 
 def main():    
-    config = ConfigParser.RawConfigParser()
+    config = ConfigParser.ConfigParser()
     config.read(CONFIGURATION_FILE)
     HOST = config.get('avrnetio1', 'host')
     REFERENCE_VOLTAGE = config.getfloat('avrnetio1', 'reference_voltage')
