@@ -31,12 +31,24 @@ import pdb
 import sys
 ## for NTC calculations
 import electronics
+## for ConfigParser.RawConfigParser()
+import ConfigParser
 
-
-host = "192.168.102.3"
-refVoltage = 5
+CONFIGURATION_FILE = "connection.cfg"
 
 def main():
+    config = ConfigParser.ConfigParser()
+    try:
+        if config.read(CONFIGURATION_FILE) == []: raise Exception()
+    except:
+        print "error: please make sure you adopted the configuration file:", CONFIGURATION_FILE
+        sys.exit(2)
+    try:
+        host = config.get('avrnetio1', 'host')
+        refVoltage = float(config.get('avrnetio1', 'reference_voltage'))
+    except:
+        print "error: please make sure your configuration file", CONFIGURATION_FILE, "contains the section", '"avrnetio1"', 'with the entry', '"host" and "reference_voltage" (a floating point value).'
+        sys.exit(2)
     try:
         netio = avrnetio.Avrnetio(host)
         netio.set_ref_ep(refVoltage)
