@@ -120,7 +120,14 @@ class Avrnetio(object):
         data = self.__send_request("adc get").strip().split(" ")
         data = map(self.__hex_string_to_int,data)
         return data
-    
+
+    def get_1w(self, which):
+        print which
+        return self.__send_request("1w get " + which)
+
+    def get_1ws(self):
+        return self.__send_request("1w list", True)
+
     # set reference electrical potential
     def set_ref_ep(self,reference_ep):
         self.__ref_ep = reference_ep
@@ -135,7 +142,7 @@ class Avrnetio(object):
     
     
     # generic method to send requests to the NET-IO 230A and checking the response
-    def __send_request(self,request):
+    def __send_request(self,request, responses_till_OK=False):
         # RS232 mode:
         if self.__serial_mode:
             try:
@@ -148,7 +155,16 @@ class Avrnetio(object):
             except serial.serialutil.SerialException:
                 raise NameError("Connection to ethersex device failed. Wrong RS232 port given? Device not powered?")
             self.__serial.readline()
-            return self.__serial.readline().replace(LINE_END,"")   # read a '\n' terminated line
+            if responses_till_OK: answer = []
+            while True:
+                line = self.__serial.readline().replace(LINE_END,"")   # read a '\n' terminated line
+                if line == 'OK': break
+                if responses_till_OK:
+                    answer.append(line)
+                else:
+                    answer = line
+                    break
+            return answer
         # network mode
         try:
             self.__s
@@ -157,7 +173,15 @@ class Avrnetio(object):
             print "(re)connecting network"
         if self.__tcp_mode:
             self.__s.send(request+LINE_END)
-            data = self.__s.recv(self.__bufsize)
+            if responses_till_OK: answer = []
+            while True:
+                line = self.__s.recv(self.__bufsize).replace(LINE_END,'')
+                if line == 'OK': break
+                if responses_till_OK:
+                    answer.append(line)
+                else:
+                    answer = line
+                    break
         else:
             self.__s.sendto(request+LINE_END, (self.__host, self.__port) )
             addr = ('',0)
@@ -165,12 +189,11 @@ class Avrnetio(object):
             while addr[0] != self.__host:
                 if time.time()-start > TIMEOUT*2:
                     raise NameError('Did not receive a response from ethersex in time.')
-                data, addr = self.__s.recvfrom(self.__bufsize)
-        if re.match("parse error", data) != None:
-            raise NameError("Error while sending request: " + request + "\nresponse from avrnetio is:  " + data)
+                answer, addr = self.__s.recvfrom(self.__bufsize)
+        if not responses_till_OK and re.match("parse error", answer) != None:
+            raise NameError("Error while sending request: " + request + "\nresponse from avrnetio is:  " + answer)
             return None
-        else:
-            return data.replace(LINE_END,"")
+        return answer
     
     def disconnect(self):
         """disconnect the class from the avrnetio. That means closing the serial port and/or closing the TCP connection."""
