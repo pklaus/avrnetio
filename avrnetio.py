@@ -122,11 +122,13 @@ class Avrnetio(object):
         return data
 
     def get_1w(self, which):
-        print which
+        self.__send_request("1w convert " + which)
         return self.__send_request("1w get " + which)
 
     def get_1ws(self):
-        return self.__send_request("1w list", True)
+        onewires = self.__send_request("1w list", True)
+        if 'OK' in onewires: onewires.remove('OK')
+        return onewires
 
     # set reference electrical potential
     def set_ref_ep(self,reference_ep):
@@ -176,12 +178,12 @@ class Avrnetio(object):
             if responses_till_OK: answer = []
             while True:
                 line = self.__s.recv(self.__bufsize).replace(LINE_END,'')
-                if line == 'OK': break
                 if responses_till_OK:
                     answer.append(line)
                 else:
                     answer = line
                     break
+                if line == 'OK': break
         else:
             self.__s.sendto(request+LINE_END, (self.__host, self.__port) )
             addr = ('',0)
@@ -190,7 +192,7 @@ class Avrnetio(object):
                 if time.time()-start > TIMEOUT*2:
                     raise NameError('Did not receive a response from ethersex in time.')
                 answer, addr = self.__s.recvfrom(self.__bufsize)
-        if not responses_till_OK and re.match("parse error", answer) != None:
+        if (type(answer).__name__=='string' and re.match("parse error", answer) != None) or (type(answer).__name__=='list' and "parse error" in answer):
             raise NameError("Error while sending request: " + request + "\nresponse from avrnetio is:  " + answer)
             return None
         return answer

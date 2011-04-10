@@ -52,16 +52,14 @@ def main():
         print("could not connect")
         sys.exit(1)
     onewires = netio.get_1ws()
-    print onewires
     onewires_status = dict()
     for onewire in onewires:
-        print onewire
         onewires_status.update({onewire: netio.get_1w(onewire)})
     netio = None
     
     # print response
     print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
-    print("onewires: %s" % (" ".join(onewires)) )
+    print("onewires: %s" % (", ".join(onewires)) )
     for which, data in onewires_status.items():
         print("onewire %s, data %s" % (which, data) )
     print("---------------------------------------------------------------- \n")
