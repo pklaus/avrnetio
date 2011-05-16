@@ -71,22 +71,30 @@ class Avrnetio(object):
         self.__secureLogin = secure_login
         self.__port = port
         self.__tcp_mode = tcp_mode
+        self.__udp_connect = True # If you just communicate with one remote host, you can call "connect" and the socket will behave like TCP
         self.__bufsize = BUFF_SIZE
         self.__refEP = None         # has to be set during operation
         self.__serial_mode = False  # has to be set during operation
-    
+        try:
+            # find out about the host:
+            socktype = SOCK_STREAM if tcp_mode else SOCK_DGRAM
+            #            getaddrinfo(host, port, family=0, socktype=0, proto=0)
+            connection = getaddrinfo(host, port, AF_UNSPEC, socktype)
+            if len(connection) < 1: raise NameError("Could not resolve hostname " + host)
+            # Take the preferred connection:
+            self.__connection = connection[0]
+        except:
+            raise NameError("There was a problem with the hostname & port you supplied: ",host,port)
+
     def __login(self):
         """ log in using TCP/IP"""
         try:
             # create the socket
-            if self.__tcp_mode:
-                self.__s = socket(AF_INET, SOCK_STREAM)
-                self.__s.settimeout(TIMEOUT)
-                self.__s.connect((self.__host, self.__port))
-            else:
-                self.__s = socket(AF_INET, SOCK_DGRAM)
-                self.__s.settimeout(TIMEOUT)
-        except error: # some socket error
+            self.__s = socket(self.__connection[0], self.__connection[1], self.__connection[2])
+            self.__s.settimeout(TIMEOUT)
+            if self.__tcp_mode or self.__udp_connect: self.__s.connect(self.__connection[4])
+            # self.__s.bind(('',0)) # (I think I don't need this as client!)
+        except NameError: # some socket error
             raise NameError("No connection to endpoint " + self.__host)
             return False
             self.disconnect()
@@ -173,7 +181,7 @@ class Avrnetio(object):
         except:
             self.__login()
             print "(re)connecting network"
-        if self.__tcp_mode:
+        if self.__tcp_mode or self.__udp_connect:
             self.__s.send(request+LINE_END)
             if responses_till_OK: answer = []
             while True:
