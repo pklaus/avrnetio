@@ -1,8 +1,8 @@
-#
+#!/usr/bin/env python2
 # -*- encoding: UTF8 -*-
 
 # author: Philipp Klaus, philipp.l.klaus AT web.de
-
+# Author: 4096R/26F7CE8A Patrick Hieber <patrick.hieber AT gmx.net>
 
 #   This file is part of avrnetio.
 #
@@ -129,14 +129,53 @@ class Avrnetio(object):
         data = map(self.__hex_string_to_int,data)
         return data
 
+    # remove 'OK' from the given output
+    def rm_ok(self, output):
+        if 'OK' in output: output.remove('OK')
+        return output
+
     def get_1w(self, which):
         self.__send_request("1w convert " + which)
         return self.__send_request("1w get " + which)
 
     def get_1ws(self):
         onewires = self.__send_request("1w list", True)
-        if 'OK' in onewires: onewires.remove('OK')
-        return onewires
+        return self.rm_ok(onewires)
+
+    def get_i2cSlaves(self):
+        i2cs = self.__send_request("i2c detect", True)
+        return self.rm_ok(i2cs)
+
+    # read byte from I2C chip 
+    def get_i2c_rbb(self, address):
+        return self.rm_ok(self.__send_request("i2c rbb "+address))
+
+    # read byte from register address at I2C chip 
+    def get_i2c_rbd(self, address, regaddress):
+        return self.rm_ok(self.__send_request("i2c rbd "+address+" "+regaddress))
+
+    # read word from register address at I2C chip 
+    def get_i2c_rwd(self, address, regaddress):
+        return self.rm_ok(self.__send_request("i2c rwd "+address+" "+regaddress))
+
+    # write byte to I2C chip
+    def get_i2c_wbb(self, address, hexbyte):
+        return self.rm_ok(self.__send_request("i2c wbb "+address+" "+hexbyte))
+
+    # write byte to register address on I2C chip
+    def get_i2c_wbd(self, address, regaddress, hexbyte):
+        return self.rm_ok(self.__send_request("i2c wbd "+address+" "+regaddress+ \
+            " "+hexbyte))
+
+    # write word to register address on I2C chip
+    def get_i2c_wwd(self, address, regaddress, hexbyte):
+        return self.rm_ok(self.__send_request("i2c wwd "+address+" "+regaddress))
+
+    # read temperature from the tmp175 sensor
+    # offset = realAddress - defaultAddress(=0x48)
+    # the offset must be between >=0 .. <27
+    def get_tmp175(self, offset):
+        return self.__send_request("tmp175 "+str(offset))
 
     # set reference electrical potential
     def set_ref_ep(self,reference_ep):
@@ -219,4 +258,4 @@ class Avrnetio(object):
     def __del__(self):
         self.disconnect()
     ###   end of class netio230a   ----------------
-
+# vim:expandtab:ts=4:sw=4:ai:number
