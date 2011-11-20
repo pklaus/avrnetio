@@ -175,7 +175,7 @@ class Avrnetio(object):
     # offset = realAddress - defaultAddress(=0x48)
     # the offset must be between >=0 .. <27
     def get_tmp175(self, offset):
-        return self.__send_request("tmp175 "+offset)
+        return self.__send_request("tmp175 "+str(offset))
 
     # set reference electrical potential
     def set_ref_ep(self,reference_ep):
