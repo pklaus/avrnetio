@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- encoding: UTF8 -*-
 
-# Author: Philipp Klaus, philipp.l.klaus AT web.de
+# Author: 4096R/26F7CE8A Patrick Hieber <patrick.hieber AT gmx.net>
 
 
 #   This file is part of avrnetio.
@@ -31,24 +31,17 @@ import pdb
 from ConfigurationHandler import ConfigurationHandler
 
 def main():
-    ch = ConfigurationHandler() #use the default filename, specified in ConfigurationHandler.py
-    print type(ch.host)
-    netio = avrnetio.Avrnetio(ch.host)
-    onewires = netio.get_1ws()
-    onewires_status = dict()
-    for onewire in onewires:
-        onewires_status.update({onewire: netio.get_1w(onewire)})
-    netio = None
-    
-    # print response
-    print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
-    print("onewires: %s" % (", ".join(onewires)) )
-    for which, data in onewires_status.items():
-        print("onewire %s, data %s" % (which, data) )
-    print("---------------------------------------------------------------- \n")
-    
+	ch = ConfigurationHandler() #use the default filename, specified in ConfigurationHandler.py
+	netio = avrnetio.Avrnetio(ch.host)
+	i2cs = netio.get_i2cSlaves()
+	netio = None
+	
+	# print response
+	print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
+	print i2cs
+	print("------------------------------------------------------------------------------- \n")
 
 if __name__ == '__main__':
-    main()
+	main()
 
-
+# vim:ts=2:sw=2:number:ai
