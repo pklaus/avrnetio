@@ -81,16 +81,16 @@ class ConfigurationHandler(object):
 
 if __name__ == '__main__':
 	b0 = ConfigurationHandler()
-	b1 = ConfigurationHandler("myConfName.conf")
+	b1 = ConfigurationHandler("connection.cfg")
 
+	print b0.personal_experience()
 	print b1.personal_experience()
-	print b2.personal_experience()
+
+	print b0.borg_knowledge(b0.name)
+	print b0.borg_knowledge(b0.host)
+	print b0.borg_knowledge(b0.config)
 
 	print b1.borg_knowledge(b1.name)
-	print b2.borg_knowledge(b1.host)
-	print b2.borg_knowledge(b1.config)
-
-	print b2.borg_knowledge(b2.name)
-	print b2.borg_knowledge(b2.host)
-	print b2.borg_knowledge(b2.config)
+	print b1.borg_knowledge(b1.host)
+	print b1.borg_knowledge(b1.config)
 # vim:ts=2:sw=2
