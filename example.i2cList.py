@@ -19,29 +19,24 @@
 #   You should have received a copy of the GNU General Public License
 #   along with avrnetio.  If not, see <http://www.gnu.org/licenses/>.
 
+# usage: example.i2cList.py
 
-
-# project-wide config file handling
-
-## import the avrnetio class:
-import avrnetio
-## for debugging (set debug mark with pdb.set_trace() )
-import pdb
 ## for config handling
 from ConfigurationHandler import ConfigurationHandler
 
-def main():
-	ch = ConfigurationHandler() #use the default filename, specified in ConfigurationHandler.py
-	netio = avrnetio.Avrnetio(ch.host)
-	i2cs = netio.get_i2cSlaves()
-	netio = None
-	
-	# print response
-	print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
-	print i2cs
-	print("------------------------------------------------------------------------------- \n")
+class ExampleI2CList(ConfigurationHandler):
+	def main(self):
+		i2cs = self.getConn().get_i2cSlaves()
+		
+		# print response
+		print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
+		print i2cs
+		print("-"*79+"\n")
+
 
 if __name__ == '__main__':
-	main()
+
+	ex = ExampleI2CList()
+	ex.main()
 
 # vim:ts=2:sw=2:number:ai

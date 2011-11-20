@@ -19,32 +19,30 @@
 #   You should have received a copy of the GNU General Public License
 #   along with avrnetio.  If not, see <http://www.gnu.org/licenses/>.
 
+# usage: example.tmp175.py [-h] [--offset OFFSET]
 
-
-## import the avrnetio class:
-import avrnetio
 # import argument parser
 import argparse
 ## for config handling
 from ConfigurationHandler import ConfigurationHandler
 
+class ExampleTMP175(ConfigurationHandler):
+	def main(self, offset=0):
+		tmp175_temp = self.getConn().get_tmp175(offset)
+		
+		# print response
+		print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
+		print tmp175_temp
+		print("-"*79+"\n")
 
-def main():
-	parser = argparse.ArgumentParser(description='Get the temperature from a tmp175 sensor')
-	parser.add_argument('--offset', dest='offset', type=int, nargs=1,\
-		metavar='N', help='int offset from base address')
-	args = parser.parse_args()
-	ch = ConfigurationHandler() #use the default filename, specified in ConfigurationHandler.py
-	netio = avrnetio.Avrnetio(ch.host)
-	tmp175_temp = netio.get_tmp175(args.offset.pop())
-	netio = None
-	
-	# print response
-	print("\n--------- successfully queried the AVR-NET-IO with ethersex commands ---------")
-	print tmp175_temp
-	print("------------------------------------------------------------------------------- \n")
 
 if __name__ == '__main__':
-	main()
+
+	parser = argparse.ArgumentParser(description='Get the temperature from a tmp175 sensor')
+	parser.add_argument('--offset', default=0, type=int, help='int offset from base address 0x48', nargs=1, dest='offset')
+	args = parser.parse_args()
+
+	ex = ExampleTMP175()
+	ex.main(args.offset)
 
 # vim:ts=2:sw=2:number:ai

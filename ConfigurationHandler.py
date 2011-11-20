@@ -18,10 +18,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with avrnetio.  If not, see <http://www.gnu.org/licenses/>.
 
-# modified version of this post:
-# http://stackoverflow.com/questions/747793/python-borg-pattern-problem/4857198#4857198
-
-
+# superclass in order to provide global config
 
 # project-wide config file handling
 ## for sys.exit(1)
@@ -30,67 +27,42 @@ import sys
 import ConfigParser
 ## main module
 import avrnetio
-"""
-config handler class
-using the borg pattern
-@see http://stackoverflow.com/questions/747793/python-borg-pattern-problem/4857198#4857198
-"""
-class ConfigurationHandler(object):
 
-	def __init__(self, name=None):
-		if name is None:
-			self.name = "connection.cfg"
-		else:
-			self.name = name
-		self.config = ConfigParser.ConfigParser()
+class ConfigurationHandler(object):
+	"""
+	config handler class (simple superclass)
+	without any weird patterns
+	"""
+
+	def __init__(self, name='connection.cfg'):
+		self._name = name
+		self._config = ConfigParser.ConfigParser()
 		try:
-			if self.config.read(self.name) == []: raise Exception()
+			if self._config.read(self._name) == []: raise Exception()
 		except:
-			print "error: please make sure that your configfile has the name:", self.name
+			print "error: please make sure that your configfile has the name:", self._name
 			sys.exit(2)
 		try:
-			self.host = self.config.get('avrnetio1', 'host')
+			self._host = self._config.get('avrnetio1', 'host')
 		except:
-			print "error: please make sure your configuration file", self.name, "contains the section", '"avrnetio1"', 'with the entry', '"host"'
+			print "error: please make sure your configuration file", self._name, "contains the section", '"avrnetio1"', 'with the entry', '"host"'
 			sys.exit(2)
 		try:
-			self.v_ref = self.config.get('avrnetio1', 'reference_voltage')
+			self._v_ref = self._config.get('avrnetio1', 'reference_voltage')
 		except:
-			print "error: please make sure your configuration file", self.name, "contains the section", '"avrnetio1"', 'with the entry', '"reference_voltage"'
+			print "error: please make sure your configuration file", self._name, "contains the section", '"avrnetio1"', 'with the entry', '"reference_voltage"'
 			sys.exit(2)
 		try:
-			self.netio = avrnetio.Avrnetio(self.host)
+			self._netio = avrnetio.Avrnetio(self._host)
 		except:
-			print "could not connect to", self.host
+			print "could not connect to", self._host
 			sys.exit(1)
 
-	@classmethod
-	def borg_knowledge(cls, who_is_it):
-		if hasattr(cls, "b_knowledge"):
-			return "%s: I already know that the borg pattern is awesome!" % who_is_it
-		else:
-			cls.b_knowledge = True
-			return "%s: Learning about the borg pattern..." % who_is_it
+	def getHost(self):
+		return self._host
+	def getVRef(self):
+		return self._v_ref
+	def getConn(self):
+		return self._netio
 
-	def personal_experience(self):
-		if hasattr(self, "p_knowledge"):
-			return "%s: I already know that!" % self.name
-		else:
-			self.p_knowledge = True
-			return "%s: Learning something..." % self.name
-
-if __name__ == '__main__':
-	b0 = ConfigurationHandler()
-	b1 = ConfigurationHandler("myConfName.conf")
-
-	print b1.personal_experience()
-	print b2.personal_experience()
-
-	print b1.borg_knowledge(b1.name)
-	print b2.borg_knowledge(b1.host)
-	print b2.borg_knowledge(b1.config)
-
-	print b2.borg_knowledge(b2.name)
-	print b2.borg_knowledge(b2.host)
-	print b2.borg_knowledge(b2.config)
 # vim:ts=2:sw=2

@@ -21,19 +21,36 @@
 
 
 
-# project-wide config file handling
+# example how to use the avrnetio class
 
 ## import the avrnetio class:
 import avrnetio
 ## for debugging (set debug mark with pdb.set_trace() )
 import pdb
-## for config handling
-from ConfigurationHandler import ConfigurationHandler
+## for sys.exit(1)
+import sys
+## for ConfigParser.RawConfigParser()
+import ConfigParser
+
+CONFIGURATION_FILE = "connection.cfg"
 
 def main():
-    ch = ConfigurationHandler() #use the default filename, specified in ConfigurationHandler.py
-    print type(ch.host)
-    netio = avrnetio.Avrnetio(ch.host)
+    config = ConfigParser.ConfigParser()
+    try:
+        if config.read(CONFIGURATION_FILE) == []: raise Exception()
+    except:
+        print "error: please make sure you adopted the configuration file:", CONFIGURATION_FILE
+        sys.exit(2)
+    try:
+        host = config.get('avrnetio1', 'host')
+    except:
+        print "error: please make sure your configuration file", CONFIGURATION_FILE, "contains the section", '"avrnetio1"', 'with the entry', '"host"'
+        sys.exit(2)
+    try:
+        netio = avrnetio.Avrnetio(host)
+    except StandardError:
+        print("could not connect")
+        sys.exit(1)
     onewires = netio.get_1ws()
     onewires_status = dict()
     for onewire in onewires:
